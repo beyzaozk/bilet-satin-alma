@@ -1,23 +1,13 @@
 <?php
 session_start();
-
-// CSRF token
-if (empty($_SESSION['csrf_token'])) {
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-}
-
-$error = '';
-if (!empty($_SESSION['error'])) {
-    $error = $_SESSION['error'];
-    unset($_SESSION['error']);
-}
+$_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 ?>
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<title>Kayıt Ol</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>Kayıt Ol</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
 <div class="container mt-5">
@@ -26,13 +16,12 @@ if (!empty($_SESSION['error'])) {
             <div class="card shadow-sm">
                 <div class="card-body">
                     <h3 class="card-title text-center mb-4">Kayıt Ol</h3>
-
-                    <?php if ($error): ?>
-                        <div class="alert alert-danger"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></div>
+                    <?php if(isset($_SESSION['error_message'])): ?>
+                        <div class="alert alert-danger"><?= htmlspecialchars($_SESSION['error_message']) ?></div>
+                        <?php unset($_SESSION['error_message']); ?>
                     <?php endif; ?>
-
-                    <form action="kayit_islemi.php" method="POST">
-                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                    <form action="kayit_islemi.php" method="POST" autocomplete="off">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
                         <div class="mb-3">
                             <label>Ad Soyad</label>
                             <input type="text" name="full_name" class="form-control" required>
