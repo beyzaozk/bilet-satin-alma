@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-// CSRF token (her sayfa yüklenişinde yenilenir)
 $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 ?>
 <!DOCTYPE html>

@@ -12,7 +12,6 @@ if (!$ticketId) {
     exit;
 }
 
-// Bilet kullanıcıya mı ait?
 $stmt = $db->prepare("SELECT * FROM Tickets WHERE id = ? AND user_id = ?");
 $stmt->execute([$ticketId, $userId]);
 $ticket = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -23,14 +22,12 @@ if (!$ticket) {
     exit;
 }
 
-// Bilet zaten iptal edilmiş mi?
 if ($ticket['status'] !== 'active') {
     $_SESSION['error'] = "Bu bilet zaten iptal edilmiş.";
     header("Location: listele.php");
     exit;
 }
 
-// İptal et
 $update = $db->prepare("UPDATE Tickets SET status = 'cancelled' WHERE id = ?");
 $update->execute([$ticketId]);
 

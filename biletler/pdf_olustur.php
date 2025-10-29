@@ -12,7 +12,6 @@ if (!$ticketId) {
     die("Geçersiz bilet ID");
 }
 
-// Bilet bilgilerini çek
 $stmt = $db->prepare("
     SELECT t.id, t.total_price, t.status, t.created_at, 
            tr.from_city, tr.to_city, tr.date, tr.duration, tr.company_name,
@@ -29,7 +28,6 @@ if (!$ticket) {
     die("Bilet bulunamadı veya erişim yetkiniz yok.");
 }
 
-// PDF oluştur
 $pdf = new FPDF();
 $pdf->AddPage();
 $pdf->SetFont('Arial', 'B', 16);

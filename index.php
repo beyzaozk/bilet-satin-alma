@@ -1,7 +1,6 @@
 <?php
 session_start();
 require __DIR__ . '/includes/db.php';
-require __DIR__ . '/includes/header.php';
 ?>
 
 <div class="container mt-5">
@@ -33,4 +32,3 @@ require __DIR__ . '/includes/header.php';
     </div>
 </div>
 
-<?php require __DIR__ . '/includes/footer.php'; ?>

@@ -1,20 +1,23 @@
 <?php
 session_start();
 require __DIR__ . '/../includes/db.php';
-require __DIR__ . '/../includes/header.php';
 
 $from = $_GET['from_city'] ?? '';
 $to = $_GET['to_city'] ?? '';
 $date = $_GET['date'] ?? '';
 
-if (!$from || !$to || !$date) {
-    echo "<div class='alert alert-warning text-center mt-5'>Lütfen tüm alanları doldurun.</div>";
-    require __DIR__ . '/../includes/footer.php';
-    exit;
-}
-
-$stmt = $db->prepare("SELECT * FROM Trips WHERE from_city = ? AND to_city = ? AND date >= ?");
-$stmt->execute([$from, $to, $date]);
+$stmt = $db->prepare("
+    SELECT * FROM Trips
+    WHERE LOWER(TRIM(departure_city)) = LOWER(TRIM(:from_city))
+      AND LOWER(TRIM(destination_city)) = LOWER(TRIM(:to_city))
+      AND DATE(departure_time) = DATE(:date)
+    ORDER BY departure_time ASC
+");
+$stmt->execute([
+    ':from_city' => $from,
+    ':to_city' => $to,
+    ':date' => $date
+]);
 $trips = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
@@ -29,10 +32,13 @@ $trips = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <div class="col-md-6 mb-4">
                     <div class="card shadow-sm h-100">
                         <div class="card-body d-flex flex-column">
-                            <h5 class="card-title"><?= htmlspecialchars($trip['from_city']) ?> → <?= htmlspecialchars($trip['to_city']) ?></h5>
-                            <p class="card-text mb-1"><strong>Tarih:</strong> <?= htmlspecialchars($trip['date']) ?></p>
+                            <h5 class="card-title">
+                                <?= htmlspecialchars($trip['departure_city']) ?> → <?= htmlspecialchars($trip['destination_city']) ?>
+                            </h5>
+                            <p class="card-text mb-1"><strong>Kalkış:</strong> <?= htmlspecialchars($trip['departure_time']) ?></p>
+                            <p class="card-text mb-1"><strong>Varış:</strong> <?= htmlspecialchars($trip['arrival_time']) ?></p>
                             <p class="card-text mb-1"><strong>Fiyat:</strong> <?= htmlspecialchars($trip['price']) ?> ₺</p>
-                            <p class="card-text mb-3"><strong>Süre:</strong> <?= htmlspecialchars($trip['duration']) ?> saat</p>
+                            <p class="card-text mb-3"><strong>Kapasite:</strong> <?= htmlspecialchars($trip['capacity']) ?></p>
 
                             <div class="mt-auto d-flex justify-content-between">
                                 <a href="detay.php?id=<?= $trip['id'] ?>" class="btn btn-outline-primary btn-sm">Detayları Gör</a>
@@ -52,5 +58,3 @@ $trips = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
     <?php endif; ?>
 </div>
-
-<?php require __DIR__ . '/../includes/footer.php'; ?>

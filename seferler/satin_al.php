@@ -2,9 +2,8 @@
 session_start();
 require __DIR__ . '/../includes/db.php';
 require __DIR__ . '/../includes/auth.php';
-require_login(); // sadece giriş yapan kullanıcılar erişebilir
+require_login();
 
-// GET ile gelen sefer ID
 $tripId = $_GET['id'] ?? null;
 
 if (!$tripId) {
@@ -12,7 +11,6 @@ if (!$tripId) {
     exit;
 }
 
-// Seferi veritabanından çek
 $stmt = $db->prepare("SELECT * FROM Trip WHERE id = ?");
 $stmt->execute([$tripId]);
 $trip = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -22,11 +20,9 @@ if (!$trip) {
     exit;
 }
 
-// Satın alma işlemi POST ile yapılır
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $userId = $_SESSION['user_id'];
 
-    // Bilet oluştur
     $ticketStmt = $db->prepare("
         INSERT INTO Tickets (id, trip_id, user_id, total_price, status, created_at)
         VALUES (:id, :trip_id, :user_id, :total_price, 'active', DATETIME('now'))
@@ -43,8 +39,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header("Location: ../biletler/listele.php");
     exit;
 }
-
-require __DIR__ . '/../includes/header.php';
 ?>
 
 <div class="container mt-5">
@@ -67,5 +61,3 @@ require __DIR__ . '/../includes/header.php';
         </form>
     </div>
 </div>
-
-<?php require __DIR__ . '/../includes/footer.php'; ?>

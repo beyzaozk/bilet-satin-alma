@@ -6,7 +6,6 @@ require_login();
 
 $userId = $_SESSION['user_id'];
 
-// Kullanıcının biletlerini çek
 $stmt = $db->prepare("
     SELECT t.id as ticket_id, t.total_price, t.status, tr.from_city, tr.to_city, tr.date
     FROM Tickets t
@@ -72,5 +71,3 @@ require __DIR__ . '/../includes/header.php';
         </div>
     <?php endif; ?>
 </div>
-
-<?php require __DIR__ . '/../includes/footer.php'; ?>
